@@ -34,6 +34,7 @@ export interface RecognizeResult {
   food_name: string
   estimated_quantity: string
   confidence: number
+  nutrition: NutritionData
 }
 
 export interface EdamamFood {

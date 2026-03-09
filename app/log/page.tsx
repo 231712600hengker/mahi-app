@@ -5,12 +5,11 @@ export const dynamic = 'force-dynamic'
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
-import { fetchNutrition } from '@/lib/edamam'
 import { getToday } from '@/lib/utils'
 import { RecognizeResult, NutritionData } from '@/types'
 import CameraCapture from '@/components/CameraCapture'
 import {
-  Camera, Loader2, ChevronLeft, Check, RefreshCw,
+  Camera, Loader2, ChevronLeft, Check,
   Flame, Beef, Wheat, Droplets, Leaf
 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -37,20 +36,19 @@ export default function LogPage() {
     setStep('recognizing')
 
     try {
-      // AI recognition
+      // AI recognition (returns food name, quantity, and nutrition directly!)
       const recRes = await fetch('/api/recognize', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ imageBase64: base64, mimeType: mime }),
       })
       const recData: RecognizeResult = await recRes.json()
+      
       setRecognize(recData)
       setEditFood(recData.food_name)
       setEditQty(recData.estimated_quantity)
-
-      // Nutrition lookup
-      const nut = await fetchNutrition(recData.food_name, recData.estimated_quantity)
-      setNutrition(nut)
+      setNutrition(recData.nutrition) // Use Gemini's nutrition directly
+      
       setStep('confirm')
     } catch {
       toast.error('Gagal mengenali makanan')
@@ -58,12 +56,7 @@ export default function LogPage() {
     }
   }, [])
 
-  const refetchNutrition = async () => {
-    if (!editFood) return
-    const nut = await fetchNutrition(editFood, editQty)
-    setNutrition(nut)
-    toast.success('Nutrisi diperbarui')
-  }
+  // No longer refetching because Gemini estimates from the photo directly.
 
   const handleSave = async () => {
     if (!nutrition || !editFood) return
@@ -184,13 +177,6 @@ export default function LogPage() {
                       className="input-field text-sm flex-1"
                       placeholder="Contoh: 1 porsi, 200g"
                     />
-                    <button
-                      onClick={refetchNutrition}
-                      title="Perbarui nutrisi"
-                      className="px-3 rounded-xl bg-neutral-800 text-neutral-400 hover:text-white transition-colors"
-                    >
-                      <RefreshCw className="w-4 h-4" />
-                    </button>
                   </div>
                 </div>
               </div>
