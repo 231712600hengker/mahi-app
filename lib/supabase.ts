@@ -1,4 +1,4 @@
-import { createBrowserClient } from '@supabase/auth-helpers-nextjs'
+import { createBrowserClient } from '@supabase/ssr'
 
 // Client-side Supabase client (use in 'use client' components)
 export const createClient = () => {
