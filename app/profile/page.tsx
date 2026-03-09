@@ -32,6 +32,7 @@ export default function ProfilePage() {
       setLoading(false)
     }
     fetchProfile()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function handleSave() {

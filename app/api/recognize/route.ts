@@ -60,7 +60,7 @@ Rules:
       // Strip markdown just in case the model ignores the instruction
       const cleaned = text.replace(/```json\n?|\n?```/g, '').trim()
       parsed = JSON.parse(cleaned)
-    } catch (parseError) {
+    } catch {
       console.error("Failed to parse Gemini JSON:", text)
       throw new Error("Invalid JSON response from AI")
     }

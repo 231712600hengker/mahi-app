@@ -39,6 +39,7 @@ export default function HomePage() {
     if (profileRes.data) setProfile(profileRes.data)
     if (logsRes.data) setLogs(logsRes.data)
     setLoading(false)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date])
 
   useEffect(() => { fetchData() }, [fetchData])

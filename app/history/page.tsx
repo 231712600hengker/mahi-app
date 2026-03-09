@@ -62,6 +62,7 @@ export default function HistoryPage() {
       setLoading(false)
     }
     fetchHistory()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Build 7-day chart data
