@@ -1,0 +1,17 @@
+{
+  "name": "MAHI — Makan Apa Hari Ini?",
+  "short_name": "MAHI",
+  "description": "Catat makananmu dengan AI setiap hari",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
