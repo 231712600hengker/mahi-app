@@ -44,10 +44,25 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
   const capturePhoto = useCallback(() => {
     if (!videoRef.current || !canvasRef.current) return
     const { videoWidth, videoHeight } = videoRef.current
-    canvasRef.current.width = videoWidth
-    canvasRef.current.height = videoHeight
-    canvasRef.current.getContext('2d')?.drawImage(videoRef.current, 0, 0)
-    const dataUrl = canvasRef.current.toDataURL('image/jpeg', 0.85)
+    
+    // Max dimension 800px to save payload size
+    const MAX_DIM = 800
+    let width = videoWidth
+    let height = videoHeight
+    
+    if (width > height && width > MAX_DIM) {
+      height = Math.round(height * (MAX_DIM / width))
+      width = MAX_DIM
+    } else if (height > MAX_DIM) {
+      width = Math.round(width * (MAX_DIM / height))
+      height = MAX_DIM
+    }
+
+    canvasRef.current.width = width
+    canvasRef.current.height = height
+    canvasRef.current.getContext('2d')?.drawImage(videoRef.current, 0, 0, width, height)
+    
+    const dataUrl = canvasRef.current.toDataURL('image/jpeg', 0.6) // Aggressive 60% compression
     setPreview(dataUrl)
     stopCamera()
   }, [stopCamera])
@@ -55,8 +70,33 @@ export default function CameraCapture({ onCapture, onClose }: CameraCaptureProps
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+
+    // Compress uploaded files too via Canvas
     const reader = new FileReader()
-    reader.onloadend = () => setPreview(reader.result as string)
+    reader.onloadend = () => {
+      const img = new Image()
+      img.onload = () => {
+        if (!canvasRef.current) return
+        const MAX_DIM = 800
+        let width = img.width
+        let height = img.height
+        
+        if (width > height && width > MAX_DIM) {
+          height = Math.round(height * (MAX_DIM / width))
+          width = MAX_DIM
+        } else if (height > MAX_DIM) {
+          width = Math.round(width * (MAX_DIM / height))
+          height = MAX_DIM
+        }
+
+        canvasRef.current.width = width
+        canvasRef.current.height = height
+        canvasRef.current.getContext('2d')?.drawImage(img, 0, 0, width, height)
+        const dataUrl = canvasRef.current.toDataURL('image/jpeg', 0.6)
+        setPreview(dataUrl)
+      }
+      img.src = reader.result as string
+    }
     reader.readAsDataURL(file)
   }
 

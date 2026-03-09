@@ -1,6 +1,9 @@
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { NextRequest, NextResponse } from 'next/server'
 
+// Allow Vercel to run up to 60s (Hobby max) instead of default 10s
+export const maxDuration = 60
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!)
 
 export async function POST(req: NextRequest) {
